@@ -14,7 +14,7 @@ app.get('/currenttime', function (req, resp) {
 });
 app.get('/', function (req, resp) {
     resp.send('<form action="/store-user" method="post">' +
-        '<label>Your name</label>' +
+        '<label>Your name: </label>' +
         '<input type="text" name="username">' +
         '<button type="submit">Submit</button>' +
         '</form>');
@@ -29,9 +29,28 @@ app.post('/store-user', function (req, resp) {
 
     existingUsers.push(userName);
 
-    fs.writeFileSync(filePath,JSON.stringify(existingUsers));
+    fs.writeFileSync(filePath, JSON.stringify(existingUsers));
 
     resp.send('<h1>Username stored</h1><h2>' + userName + '</h2>')
+});
+
+
+app.get('/users', function (req, res) {
+    const filePath = path.join(__dirname, 'data', 'users.json');
+
+    const fileData = fs.readFileSync(filePath);
+    const existingUsers = JSON.parse(fileData);
+
+    let responseData = '<ul>';
+
+    for (const user of existingUsers) {
+        responseData += '<li>' + user + '</li>';
+    }
+    responseData += '</ul>';
+    console.log(responseData);
+
+    res.send(responseData);
+
 });
 
 app.listen(3000);
